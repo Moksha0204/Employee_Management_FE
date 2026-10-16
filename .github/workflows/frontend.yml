@@ -1,0 +1,33 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint --if-present
+      - run: npm test --if-present
+      - run: npm run build
+
+  cd:
+    needs: ci
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t employee-ui .
+      - name: Replace container
+        run: |
+          docker rm -f employee-ui || true
+          docker run -d -p 5173:5173 \
+            -e VITE_API_URL=http://3.106.138.222:8080 \
+            --name employee-ui employee-ui
