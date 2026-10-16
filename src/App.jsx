@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-const API_URL = 'http://3.106.138.222:8080/api/employees'
+const API_URL = 'http://32.236.225.240:8080/api/employees'
 
 const EMPTY_FORM = {
   name: '',
